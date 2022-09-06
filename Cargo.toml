@@ -1,0 +1,11 @@
+[package]
+name = "mena-rust"
+version = "1.0.0"
+edition = "2021"
+
+[source.crates-io]
+registry = "git://github.com/rust-lang/crates.io-index.git"
+
+[dependencies]
+thirtyfour = "0.31.0"
+tokio = "1.20.1"

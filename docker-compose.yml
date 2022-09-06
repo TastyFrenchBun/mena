@@ -1,0 +1,12 @@
+version: '3.9'
+services:
+  pterodactyl:
+    image: mena-rust:pterodactyl
+    build:
+      context: .
+      dockerfile: ./docker/pterodactyl/Dockerfile
+  native:
+    image: mena-rust:native
+    build: 
+      context: .
+      dockerfile: ./docker/native/Dockerfile
