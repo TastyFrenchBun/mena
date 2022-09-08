@@ -18,6 +18,7 @@ It also was made as an example on how to put your Rust program inside a Pterodac
 ## Known Issues
 - When exiting with Ctrl+C, it will keep chromium process alive
 - Pterodactyl docker image is not using `USER container`
+- Slow `Updating crates.io index`
 
 ## Setting up
 Coming soon...
