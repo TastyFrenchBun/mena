@@ -16,17 +16,21 @@ FROM alpine:latest
 # create user for pterodactyl
 RUN adduser --disabled-password --home /home/container container
 
+# set user to container
+# will uncomment after release.....
+# USER container
+
 # set working directory
 WORKDIR /home/container
 ENV USER container
 ENV HOME /home/container
 
 # copy binary from builder
-COPY --from=builder /build/target/release/mena-rust .
+COPY --from=builder /build/target/release/mena-rust /usr/sbin/mena-rust
 
-# set user to container
-USER container
+RUN apk add chromium-chromedriver
 
-COPY --from=builder /build/docker/pterodactyl/start.sh /start.sh
-COPY --from=builder /build/docker/pterodactyl/entrypoint.sh /entrypoint.sh
+COPY /docker/pterodactyl/start.sh /start.sh
+COPY /docker/pterodactyl/entrypoint.sh /entrypoint.sh
+
 CMD ["/bin/ash", "/entrypoint.sh"]

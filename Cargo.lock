@@ -90,6 +90,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "clokwerk"
+version = "0.4.0-rc1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8cca22ab3f48e39a5e8432ea296da1063b3d000c3d3c37da9fa586961e21bf73"
+dependencies = [
+ "chrono",
+]
+
+[[package]]
 name = "cookie"
 version = "0.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -427,8 +436,11 @@ checksum = "2dffe52ecf27772e601905b7522cb4ef790d2cc203488bbd0e2fe85fcb74566d"
 name = "mena-rust"
 version = "1.0.0"
 dependencies = [
+ "clokwerk",
+ "serde",
  "thirtyfour",
  "tokio",
+ "toml",
 ]
 
 [[package]]
@@ -946,6 +958,15 @@ dependencies = [
  "rustls",
  "tokio",
  "webpki",
+]
+
+[[package]]
+name = "toml"
+version = "0.5.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8d82e1a7758622a465f8cee077614c73484dac5b836c02ff6a40d5d1010324d7"
+dependencies = [
+ "serde",
 ]
 
 [[package]]

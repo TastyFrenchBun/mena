@@ -1,12 +1,31 @@
-use thirtyfour::{prelude::*, support};
+use clokwerk::{Scheduler, TimeUnits};
+use std::sync::mpsc::{channel};
+use std::thread;
+use std::time::Duration;
 
-#[tokio::main]
-async fn main() -> WebDriverResult<()> {
-	let mut caps = DesiredCapabilities::chrome();
-	let driver = WebDriver::new("http://localhost:9515", caps).await?;
+mod mena;
 
-	println!("helo");
+fn main() {
+	//let config = mena::config::get_config();
 
-	driver.quit().await?;
-	Ok(())
+	let (sender, receiver) = channel();
+
+	// start webdriver asynchronously
+	let runtime = tokio::runtime::Runtime::new().unwrap();
+	runtime.spawn(mena::webdriver::spawn_driver(receiver));
+
+	// create scheduler
+	let mut scheduler = Scheduler::new();
+	scheduler.every(1.seconds()).run(move || {
+		match sender.send(()) {
+			Ok(_) => {}, // add log
+			Err(err) => println!("{}", err)
+		}
+	});
+
+	// run it...
+	loop {
+		scheduler.run_pending();
+    	thread::sleep(Duration::from_millis(100));
+	}
 }
