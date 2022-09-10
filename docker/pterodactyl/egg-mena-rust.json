@@ -4,8 +4,8 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2022-08-28T05:34:49+03:00",
-    "name": "mena-rust",
+    "exported_at": "2022-09-11T01:41:14+03:00",
+    "name": "mena-rust-egg",
     "author": "me@hatcat.org",
     "description": "Rust service to track EUR-RUB changes in Telegram",
     "features": null,
@@ -13,26 +13,26 @@
         "mena-rust:pterodactyl": "mena-rust:pterodactyl"
     },
     "file_denylist": [],
-    "startup": "{{STARTUP_CMD}}",
+    "startup": "echo \"\"",
     "config": {
-        "files": "{\r\n    \"nginx\/conf.d\/default.conf\": {\r\n        \"parser\": \"file\",\r\n        \"find\": {\r\n            \"    listen \": \"    listen {{server.build.default.port}};\"\r\n        }\r\n    }\r\n}",
+        "files": "{}",
         "startup": "{\r\n    \"done\": \"\",\r\n    \"userInteraction\": []\r\n}",
-        "logs": "{\r\n    \"custom\": false,\r\n    \"location\": \"logs\/latest.log\"\r\n}",
+        "logs": "{\r\n    \"custom\": false,\r\n    \"location\": \"latest.log\"\r\n}",
         "stop": "^C"
     },
     "scripts": {
         "installation": {
-            "script": "#!\/bin\/ash\r\ncd \/mnt\/server\r\ncp -r \/dist \/mnt\/server\/web\r\ncp -r \/nginx \/mnt\/server\/\r\ncp \/start.sh \/mnt\/server\/\r\nmkdir \/mnt\/server\/logs\r\necho \"\" > \/mnt\/server\/logs\/error.log\r\nchmod +x \/mnt\/server\/start.sh",
+            "script": "#!\/bin\/ash",
             "container": "mena-rust:pterodactyl",
             "entrypoint": "ash"
         }
     },
     "variables": [
         {
-            "name": "Startup Command",
-            "description": "The command to start",
-            "env_variable": "STARTUP_CMD",
-            "default_value": ".\/start.sh",
+            "name": "Config Path",
+            "description": "mena-rust configuration path",
+            "env_variable": "MENA_CONFIG",
+            "default_value": "\/home\/container\/config.toml",
             "user_viewable": true,
             "user_editable": true,
             "rules": "present",

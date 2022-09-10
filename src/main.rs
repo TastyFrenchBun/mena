@@ -42,7 +42,7 @@ fn main() {
 
 	// run it...
 	loop {
-		//scheduler.tick();
+		scheduler.tick();
     	thread::sleep(Duration::from_secs(1));
 	}
 }

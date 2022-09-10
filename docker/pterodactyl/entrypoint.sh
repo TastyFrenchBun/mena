@@ -3,6 +3,6 @@ sleep 1
 
 cd /home/container
 
-/usr/bin/chromedriver/ &
+/usr/bin/chromedriver &
 sleep 5
 /usr/bin/mena-rust

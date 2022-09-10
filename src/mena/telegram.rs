@@ -1,6 +1,6 @@
 use std::sync::Arc;
-
 use teloxide::{prelude::*, types::InputFile};
+use image::*;
 use crate::mena::config;
 
 pub fn start_bot(config: Arc<config::Config>) -> AutoSend<Bot> {
@@ -20,7 +20,18 @@ pub async fn post_currency(bot: AutoSend<Bot>, chat_id: String, screenshot: Vec<
 		}
 	};
 
-	match bot.send_photo(chat_id, InputFile::memory(screenshot)).await {
+	let mut img = match image::load_from_memory(screenshot.as_bytes()) {
+		Ok(img) => img,
+		Err(err) => {
+			println!("[mena-rust] couldn't decode image => {}", err);
+			return
+		}
+	};
+
+	let cropped_img = img.crop(165, 175, 850, 510);
+	let img_bytes = cropped_img.as_bytes().to_vec();
+
+	match bot.send_photo(chat_id, InputFile::memory(img_bytes)).await {
 		Ok(_) => (),
 		Err(err) => println!("{}", err)
 	}

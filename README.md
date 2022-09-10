@@ -11,6 +11,7 @@ It also was made as an example on how to put your Rust program inside a Pterodac
 - Add custom print format
 - Enhance error handling
 - Upload built docker images somewhere
+- Use simple `GET/POST` instead of `teloxide`
 
 ## Known Issues
 - When exiting with Ctrl+C, it will keep chromium process alive

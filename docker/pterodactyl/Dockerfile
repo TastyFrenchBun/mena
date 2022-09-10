@@ -8,6 +8,7 @@ WORKDIR /builder
 COPY . .
 
 # build binary with release profile
+RUN rustup update
 RUN cargo build --release --bin mena-rust
 
 # get other rust image for final image
@@ -33,7 +34,7 @@ ENV MENA_CONFIG /home/container/config.toml
 # copy binary from builder
 COPY --from=builder /builder/target/release/mena-rust /usr/bin/mena-rust
 
-COPY /docker/pterodactyl/start.sh /start.sh
+#COPY /docker/pterodactyl/start.sh /start.sh
 COPY /docker/pterodactyl/entrypoint.sh /entrypoint.sh
 
 CMD ["/bin/ash", "/entrypoint.sh"]

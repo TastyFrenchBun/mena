@@ -9,6 +9,7 @@ pub async fn spawn_driver(config: Arc<mena::config::Config>, bot: Option<AutoSen
 
 	caps.set_no_sandbox()?;
 	caps.add_chrome_arg("--window-size=1920,1080")?;
+	caps.add_chrome_arg("--lang=en-us")?;
 	caps.set_disable_gpu()?;
 	caps.set_headless()?;
 	caps.set_binary(config.chromium_path.as_str())?;
