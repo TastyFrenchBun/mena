@@ -3,15 +3,16 @@ name = "mena-rust"
 version = "1.0.0"
 edition = "2021"
 
-[dependencies]
-thirtyfour = "0.31.0"
-tokio = "1.20.1"
-clokwerk = "0.4.0-rc1"
-serde = "1.0.144"
-toml = "0.5.9"
-
 [profile.release]
 strip = true
 codegen-units = 1
 lto = true
 debug = false
+
+[dependencies]
+thirtyfour = "0.31.0"
+tokio = "1.20.1"
+job_scheduler_ng = "2.0.1"
+teloxide = "0.10.1"
+serde = "1.0.144"
+toml = "0.5.9"

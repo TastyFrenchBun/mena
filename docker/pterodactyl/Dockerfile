@@ -28,6 +28,7 @@ RUN apt-get install chromium chromium-driver ash -y
 WORKDIR /home/container
 ENV USER container
 ENV HOME /home/container
+ENV MENA_CONFIG /home/container/config.toml
 
 # copy binary from builder
 COPY --from=builder /builder/target/release/mena-rust /usr/bin/mena-rust

@@ -1,85 +1,67 @@
-use thirtyfour::{prelude::*};
-use std::sync::mpsc::Receiver;
+use std::sync::Arc;
 
-pub async fn spawn_driver(receiver: Receiver<()>) {
-	println!("[mena-rust] Starting the driver");
-	
+use teloxide::{prelude::AutoSend, Bot};
+use thirtyfour::prelude::*;
+use crate::mena;
+
+pub async fn spawn_driver(config: Arc<mena::config::Config>, bot: Option<AutoSend<Bot>>) -> WebDriverResult<()> {
 	let mut caps = DesiredCapabilities::chrome();
 
-	// disable sandbox
-	if let Err(err) = caps.set_no_sandbox() {
-		println!("[mena-rust] couldn't disable sandbox! {}", err);
-		return
-	}
+	caps.set_no_sandbox()?;
+	caps.add_chrome_arg("--window-size=1920,1080")?;
+	caps.set_disable_gpu()?;
+	caps.set_headless()?;
+	caps.set_binary(config.chromium_path.as_str())?;
 
-	// set window size
-	if let Err(err) = caps.add_chrome_arg("--window-size=1920,1080") {
-		println!("[mena-rust] couldn't set window size! {}", err);
-		return
-	}
-
-	// disable gpu
-	if let Err(err) = caps.set_disable_gpu() {
-		println!("[mena-rust] couldn't disable gpu! {}", err);
-		return
-	}
-
-	// set it to be headless
-	if let Err(err) = caps.set_headless() {
-		println!("[mena-rust] couldn't set chromium to headless! {}", err);
-		return
-	}
-
-	// set chromium binary path
-	if let Err(err) = caps.set_binary("/usr/bin/chromium") {
-		println!("[mena-rust] couldn't set chromium binary path! {}", err);
-		return
-	}
-
-	// get the driver
+	// start the web browser
 	let driver_result = WebDriver::new("http://localhost:9515", caps).await;
 
 	let driver = match driver_result {
 		Ok(driver) => driver,
-		Err(err) => panic!("{}", err)
+		Err(err) => return Err(err)
 	};
 	
-	if let Err(err) = driver.goto("https://www.google.com/search?q=eur+to+rub").await {
-		println!("[mena-rust] couldn't open the requested page! {}", err);
-		return
+	let url = format!("https://www.google.com/search?q={}+to+{}", config.first_currency, config.second_currency);
+
+	if let Err(err) = driver.goto(url).await {
+		return Err(err);
 	}
 
-	loop {
-		// wait for a channel to send a message
-		receiver.recv().expect("Received an error!");
+	// refresh the page
+	driver.refresh().await?;
 
-		// refresh the page
-		if let Err(err) = driver.refresh().await {
-			println!("[mena-rust] error while refreshing the page! {}", err);
-			return
-		}
+	// get cost span
+	let find_result = driver.find(By::XPath(r#"//*[@id="knowledge-currency__updatable-data-column"]/div[1]/div[2]/span[1]"#)).await;
 
-		// get cost span
-		let find_result = driver.find(By::XPath(r#"//*[@id="knowledge-currency__updatable-data-column"]/div[1]/div[2]/span[1]"#)).await;
+	let cost_span = match find_result {
+		Ok(cost_span) => cost_span,
+		Err(err) => {
+			let mut url = String::from("unknown");
 
-		let cost_span = match find_result {
-			Ok(cost_span) => cost_span,
-			Err(err) => {
-				if let Ok(url) = driver.current_url().await {
-					println!("couldn't find cost span on page \"{}\", error: {}", url, err);
-				} else {
-					println!("a")
-				}
-
-				return;
+			if let Ok(current_url) = driver.current_url().await {
+				url = current_url.to_string()
 			}
-		};
+			
+			let error_msg = format!("couldn't find currency price span on page {}, error: {}", url, err.to_string());
+			return Err(WebDriverError::CustomError(error_msg));
+		}
+	};
 
-		let cost = cost_span.text().await;
+	match cost_span.text().await {
+		Ok(cost) => println!("{} -> {} = {}", config.first_currency, config.second_currency, cost),
+		Err(err) => println!("{}", err)
+	}
 
-		match cost {
-			Ok(cost) => {println!("{}", cost)},
-			Err(err) => {println!("{}", err)}
+	if let Some(bot) = bot {
+		if let Ok(screenshot) = driver.screenshot_as_png().await {
+			mena::telegram::post_currency(bot, config.telegram.chat_id.clone(), screenshot).await
 		}
 	}
+
+	//drop(config);
+	//let count = Arc::strong_count(&config);
+	//println!("strong count {}", count);
+
+	driver.quit().await?;
+	Ok(())
 }
