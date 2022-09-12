@@ -10,7 +10,7 @@ COPY . .
 RUN cargo build --release --bin mena-rust
 
 # move to alpine for final image
-FROM alpine:latest as runtime
+FROM debian:latest as runtime
 
 # set working directory
 WORKDIR /mena-rust

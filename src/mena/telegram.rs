@@ -1,6 +1,7 @@
 use std::sync::Arc;
 use teloxide::{prelude::*, types::InputFile};
-use image::*;
+use image::{imageops, EncodableLayout};
+use std::io::Cursor;
 use crate::mena::config;
 
 pub fn start_bot(config: Arc<config::Config>) -> AutoSend<Bot> {
@@ -15,25 +16,41 @@ pub async fn post_currency(bot: AutoSend<Bot>, chat_id: String, screenshot: Vec<
 	let chat_id = match chat_result {
 		Ok(chat) => chat.id,
 		Err(err) => {
-			println!("[mena-rust] telegram chat error => {}", err);
+			println!("[mena-rust] telegram chat error -> {}", err);
 			return
 		}
 	};
 
-	let mut img = match image::load_from_memory(screenshot.as_bytes()) {
+	let img = match image::load_from_memory(screenshot.as_bytes()) {
 		Ok(img) => img,
 		Err(err) => {
-			println!("[mena-rust] couldn't decode image => {}", err);
+			println!("[mena-rust] couldn't decode image -> {}", err);
 			return
 		}
 	};
 
-	let cropped_img = img.crop(165, 175, 850, 510);
-	let img_bytes = cropped_img.as_bytes().to_vec();
+	// sometimes even with --1920,1080 and same window size it still sets to 3840, 2160
+	let mut resized_img = img.resize(1920, 1080, imageops::FilterType::CatmullRom);
 
-	match bot.send_photo(chat_id, InputFile::memory(img_bytes)).await {
+	let cropped_img = resized_img.crop(165, 175, 850, 510);
+
+	let mut cursor = Cursor::new(Vec::new());
+
+	match cropped_img.write_to(&mut cursor, image::ImageFormat::Png) {
+		Ok(_) => {
+			//println!("[mena-rust] written image successfully! {}", cursor.get_ref().len())
+		},
+		Err(err) => {
+			println!("[mena-rust] couldn't write image to Cursor -> {}", err);
+			return
+		}
+	};
+
+	let png_image = cursor.get_ref().to_owned();
+
+	match bot.send_photo(chat_id, InputFile::memory(png_image)).await {
 		Ok(_) => (),
-		Err(err) => println!("{}", err)
+		Err(err) => println!("[mena-rust] send_photo error -> {}", err)
 	}
 
 	return

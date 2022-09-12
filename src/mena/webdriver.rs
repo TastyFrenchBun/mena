@@ -1,15 +1,15 @@
 use std::sync::Arc;
 
 use teloxide::{prelude::AutoSend, Bot};
-use thirtyfour::prelude::*;
+use thirtyfour::prelude::{DesiredCapabilities, WebDriver, WebDriverResult, By, WebDriverError};
 use crate::mena;
 
 pub async fn spawn_driver(config: Arc<mena::config::Config>, bot: Option<AutoSend<Bot>>) -> WebDriverResult<()> {
 	let mut caps = DesiredCapabilities::chrome();
 
 	caps.set_no_sandbox()?;
-	caps.add_chrome_arg("--window-size=1920,1080")?;
-	caps.add_chrome_arg("--lang=en-us")?;
+	//caps.add_chrome_arg("--window-size=1920,1080")?;
+	caps.add_chrome_arg("--lang=en-UK")?;
 	caps.set_disable_gpu()?;
 	caps.set_headless()?;
 	caps.set_binary(config.chromium_path.as_str())?;
@@ -21,6 +21,8 @@ pub async fn spawn_driver(config: Arc<mena::config::Config>, bot: Option<AutoSen
 		Ok(driver) => driver,
 		Err(err) => return Err(err)
 	};
+
+	driver.set_window_rect(0, 0, 1920, 1080).await?;
 	
 	let url = format!("https://www.google.com/search?q={}+to+{}", config.first_currency, config.second_currency);
 

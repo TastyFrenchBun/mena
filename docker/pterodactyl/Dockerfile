@@ -12,7 +12,7 @@ RUN rustup update
 RUN cargo build --release --bin mena-rust
 
 # get other rust image for final image
-FROM rust AS runtime
+FROM debian:latest AS runtime
 
 # create user
 RUN adduser --disabled-password --home /home/container container
