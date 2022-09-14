@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{sync::Arc, collections::HashMap};
 
 use teloxide::{prelude::AutoSend, Bot};
 use thirtyfour::prelude::{DesiredCapabilities, WebDriver, WebDriverResult, By, WebDriverError};
@@ -8,8 +8,15 @@ pub async fn spawn_driver(config: Arc<mena::config::Config>, bot: Option<AutoSen
 	let mut caps = DesiredCapabilities::chrome();
 
 	caps.set_no_sandbox()?;
-	//caps.add_chrome_arg("--window-size=1920,1080")?;
-	caps.add_chrome_arg("--lang=en-UK")?;
+	caps.add_chrome_arg("--window-size=1920,1080")?;
+
+	let lang = format!("--lang={}", config.language.clone());
+	caps.add_chrome_arg(lang.as_str())?;
+
+	let mut prefs = HashMap::new();
+	prefs.insert("intl.accept_languages", config.language.clone());
+
+	caps.add_chrome_option("prefs", prefs)?;
 	caps.set_disable_gpu()?;
 	caps.set_headless()?;
 	caps.set_binary(config.chromium_path.as_str())?;
@@ -57,7 +64,9 @@ pub async fn spawn_driver(config: Arc<mena::config::Config>, bot: Option<AutoSen
 
 	if let Some(bot) = bot {
 		if let Ok(screenshot) = driver.screenshot_as_png().await {
-			mena::telegram::post_currency(bot, config.telegram.chat_id.clone(), screenshot).await
+			driver.quit().await?;
+			mena::telegram::post_currency(bot, config.telegram.chat_id.clone(), screenshot).await;
+			return Ok(())
 		}
 	}
 

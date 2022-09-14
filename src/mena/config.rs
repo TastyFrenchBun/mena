@@ -4,6 +4,7 @@ use serde;
 pub struct Config {
 	pub first_currency: String,
 	pub second_currency: String,
+	pub language: String,
 	pub schedule: String,
 	pub chromium_path: String,
 	pub telegram: Telegram,
@@ -20,6 +21,7 @@ fn create_config_file() -> std::io::Result<()> {
 	let config = Config {
 		first_currency: "EUR".to_string(),
 		second_currency: "RUB".to_string(),
+		language: "en-US".to_string(),
 		schedule: "*/10 * * * * * *".to_string(),
 		chromium_path: "/usr/bin/chromium".to_string(),
 		telegram: Telegram { 

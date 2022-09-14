@@ -32,7 +32,7 @@ pub async fn post_currency(bot: AutoSend<Bot>, chat_id: String, screenshot: Vec<
 	// sometimes even with --1920,1080 and same window size it still sets to 3840, 2160
 	let mut resized_img = img.resize(1920, 1080, imageops::FilterType::CatmullRom);
 
-	let cropped_img = resized_img.crop(165, 175, 850, 510);
+	let cropped_img = resized_img.crop(175, 175, 755, 340);
 
 	let mut cursor = Cursor::new(Vec::new());
 
