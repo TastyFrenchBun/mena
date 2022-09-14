@@ -22,8 +22,7 @@ RUN apt-get update
 RUN apt-get install chromium chromium-driver ash -y
 
 # set user to container
-# will uncomment after release.....
-# USER container
+USER container
 
 # set working directory
 WORKDIR /home/container
@@ -34,7 +33,6 @@ ENV MENA_CONFIG /home/container/config.toml
 # copy binary from builder
 COPY --from=builder /builder/target/release/mena-rust /usr/bin/mena-rust
 
-#COPY /docker/pterodactyl/start.sh /start.sh
 COPY /docker/pterodactyl/entrypoint.sh /entrypoint.sh
 
 CMD ["/bin/ash", "/entrypoint.sh"]

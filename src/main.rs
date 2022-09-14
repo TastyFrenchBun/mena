@@ -16,6 +16,9 @@ fn main() {
 		bot = Some(mena::telegram::start_bot(config.clone()))
 	}
 
+	// tell that we're starting
+	println!("[mena-rust] starting...");
+
 	// start webdriver asynchronously
 	let runtime = tokio::runtime::Runtime::new().unwrap();
 	runtime.spawn(mena::webdriver::spawn_driver(config.clone(), bot.clone()));

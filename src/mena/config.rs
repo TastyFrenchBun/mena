@@ -79,7 +79,8 @@ pub fn get_config() -> Config {
 
 	// check if it exists
 	if !config_file.exists() {
-		println!("Config file doesn't exist\nCreating new one...");
+		println!("[mena-rust] config file doesn't exist");
+		println!("[mena-rust] creating new one at {}", config_file.to_string_lossy());
 
 		let result = create_config_file();
 

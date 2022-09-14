@@ -4,27 +4,27 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2022-09-11T01:41:14+03:00",
-    "name": "mena-rust-egg",
+    "exported_at": "2022-09-15T01:20:37+03:00",
+    "name": "mena-egg",
     "author": "me@hatcat.org",
     "description": "Rust service to track EUR-RUB changes in Telegram",
     "features": null,
     "docker_images": {
-        "mena-rust:pterodactyl": "mena-rust:pterodactyl"
+        "ghcr.io\/tastyfrenchbun\/mena-rust:pterodactyl": "ghcr.io\/tastyfrenchbun\/mena-rust:pterodactyl"
     },
     "file_denylist": [],
     "startup": "echo \"\"",
     "config": {
         "files": "{}",
-        "startup": "{\r\n    \"done\": \"\",\r\n    \"userInteraction\": []\r\n}",
+        "startup": "{\r\n    \"done\": \"[mena-rust] starting...\",\r\n    \"userInteraction\": []\r\n}",
         "logs": "{\r\n    \"custom\": false,\r\n    \"location\": \"latest.log\"\r\n}",
         "stop": "^C"
     },
     "scripts": {
         "installation": {
-            "script": "#!\/bin\/ash",
-            "container": "mena-rust:pterodactyl",
-            "entrypoint": "ash"
+            "script": null,
+            "container": "alpine:latest",
+            "entrypoint": "\/bin\/sh"
         }
     },
     "variables": [
