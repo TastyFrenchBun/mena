@@ -10,7 +10,7 @@
     "description": "Rust service to track EUR-RUB changes in Telegram",
     "features": null,
     "docker_images": {
-        "ghcr.io\/tastyfrenchbun\/mena-rust:pterodactyl": "ghcr.io\/tastyfrenchbun\/mena-rust:pterodactyl"
+        "ghcr.io\/tastyfrenchbun\/mena:pterodactyl": "ghcr.io\/tastyfrenchbun\/mena:pterodactyl"
     },
     "file_denylist": [],
     "startup": "echo \"\"",
@@ -30,7 +30,7 @@
     "variables": [
         {
             "name": "Config Path",
-            "description": "mena-rust configuration path",
+            "description": "mena configuration path",
             "env_variable": "MENA_CONFIG",
             "default_value": "\/home\/container\/config.toml",
             "user_viewable": true,

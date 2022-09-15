@@ -12,14 +12,14 @@ RUN rustup update
 RUN cargo build --release --bin mena-rust
 
 # get other rust image for final image
-FROM debian:bookworm-slim AS runtime
+FROM debian:latest AS runtime
 
 # create user
 RUN adduser --disabled-password --home /home/container container
 
 # install chromium & chromium-driver
 RUN apt-get update
-RUN apt-get install chromium chromium-driver ash -y
+RUN apt-get install chromium chromium-driver -y
 
 # set user to container
 USER container
@@ -35,4 +35,4 @@ COPY --from=builder /builder/target/release/mena-rust /usr/bin/mena-rust
 
 COPY /docker/pterodactyl/entrypoint.sh /entrypoint.sh
 
-CMD ["/bin/ash", "/entrypoint.sh"]
+CMD ["/bin/bash", "/entrypoint.sh"]
